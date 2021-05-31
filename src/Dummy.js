@@ -1,13 +1,16 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-const Dummy = () => {
+const Dummy = (props) => {
+  const logOut = () => {
+    props.navigation.navigate("Login");
+  };
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 20, fontFamily: "CairoRegular" }}>
         أهلا وسهلا
       </Text>
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity style={styles.googleButton} onPress={logOut}>
         <Text
           style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
         >

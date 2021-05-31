@@ -7,6 +7,8 @@ import {
   View,
 } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const SignUp = (props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLasttName] = useState("");
@@ -14,6 +16,7 @@ const SignUp = (props) => {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [error, setError] = useState("");
+  const [token, settoken] = useState("");
 
   const signUp = async () => {
     const respoonse = await fetch(
@@ -45,11 +48,31 @@ const SignUp = (props) => {
     }
 
     const data = await respoonse.json();
-    const token = data.idToken;
-    console.log(token);
-    props.navigation.navigate("Dummy");
+    settoken(data.idToken);
+    saveToken(token);
     setError("");
+    props.navigation.navigate("Dummy");
   };
+
+  const saveToken = async (token) => {
+    try {
+      await AsyncStorage.setItem("token", token);
+    } catch (e) {
+      // saving error
+    }
+  };
+
+  const getToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+      if (value !== null) {
+        // value previously stored
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 30, fontFamily: "CairoBold" }}>
