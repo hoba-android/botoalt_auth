@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
-
+import * as Google from "expo-google-app-auth";
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,9 +47,40 @@ const Login = (props) => {
 
     const data = await respoonse.json();
     const token = data.idToken;
-    console.log(token);
+
     props.navigation.navigate("Dummy");
     setError("");
+  };
+
+  const googleSignIn = async () => {
+    //    await Google.logInAsync(config).then((resutl) => {
+    //        const {type, user} = resutl;
+    //        if (type === 'success') {
+    //         handleMessage('Google sign in succeeded')
+    //         props.navigation.navigate("Dummy");
+    //       } else {
+    //         handleMessage('Google sign in canceled')
+    //       }
+    //    }).catch((error) => {
+    //         console.log(error)
+    //         handleMessage('An error occured')
+    //     });
+
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: `181557170242-ce4sedotnr1ctu289jjm9qm9uef8h83h.apps.googleusercontent.com`,
+        scopes: ["profile", "email"],
+      });
+
+      if (result.type === "success") {
+        props.navigation.navigate("Dummy");
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      return { error: true };
+    }
   };
 
   return (
@@ -121,7 +152,7 @@ const Login = (props) => {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity style={styles.googleButton} onPress={googleSignIn}>
         <Text
           style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
         >
