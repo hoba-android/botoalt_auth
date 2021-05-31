@@ -1,20 +1,10 @@
 import { useFonts } from "expo-font";
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-} from "@react-navigation/drawer";
+import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 
 import Login from "./src/Login";
 import SignUp from "./src/SignUp";
@@ -22,6 +12,10 @@ import Dummy from "./src/Dummy";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+import firebase from "firebase/app";
+import "firebase/firestore";
+import apiKeys from "./config";
 
 export default function App(props) {
   const [loaded] = useFonts({
@@ -32,6 +26,11 @@ export default function App(props) {
 
   if (!loaded) {
     return null;
+  }
+
+  if (!firebase.apps.length) {
+    console.log("Connected with Firebase");
+    firebase.initializeApp(apiKeys.firebaseConfig);
   }
 
   function CustomDrawerContent(props) {

@@ -13,7 +13,43 @@ const SignUp = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [error, setError] = useState("");
 
+  const signUp = async () => {
+    const respoonse = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCYV3YrSkQwgZXJrqwpCPNVQC9nzQB3m7c",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          returnSecureToken: true,
+        }),
+      }
+    );
+
+    if (!respoonse.ok) {
+      const erroeResData = await respoonse.json();
+      const errId = erroeResData.error.message;
+      var msg = "This email is already exists";
+      setError("Something went wrong");
+      if (errId == "EMAIL_EXISTS") {
+        console.log(errId);
+
+        setError(msg);
+      }
+      throw new Error(msg);
+    }
+
+    const data = await respoonse.json();
+    const token = data.idToken;
+    console.log(token);
+    props.navigation.navigate("Dummy");
+    setError("");
+  };
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 30, fontFamily: "CairoBold" }}>
@@ -71,7 +107,9 @@ const SignUp = (props) => {
         <Text style={{ color: "blue" }}>الشروط والأحكام</Text>
       </Text>
 
-      <TouchableOpacity style={styles.loginButton}>
+      {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+
+      <TouchableOpacity style={styles.loginButton} onPress={signUp}>
         <Text
           style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
         >

@@ -12,6 +12,45 @@ import { FontAwesome } from "@expo/vector-icons";
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const signIn = async () => {
+    const respoonse = await fetch(
+      "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCYV3YrSkQwgZXJrqwpCPNVQC9nzQB3m7c",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          returnSecureToken: true,
+        }),
+      }
+    );
+
+    if (!respoonse.ok) {
+      const erroeResData = await respoonse.json();
+      const errId = erroeResData.error.message;
+      var msg = "This email could not be found";
+      setError(msg);
+      if (errId == "EMAIL_NOT_FOUND") {
+        setError(msg);
+      } else if (errId == "INVALID_PASSWORD") {
+        msg = "The password is invalid";
+        setError(msg);
+      }
+      console.log(errId);
+      throw new Error(msg);
+    }
+
+    const data = await respoonse.json();
+    const token = data.idToken;
+    console.log(token);
+    props.navigation.navigate("Dummy");
+    setError("");
+  };
 
   return (
     <View style={styles.container}>
@@ -35,7 +74,8 @@ const Login = (props) => {
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.loginButton}>
+      {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+      <TouchableOpacity style={styles.loginButton} onPress={signIn}>
         <Text
           style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
         >
