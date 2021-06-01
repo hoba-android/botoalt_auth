@@ -5,10 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Google from "expo-google-app-auth";
+import * as Facebook from "expo-facebook";
+
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -83,89 +86,130 @@ const Login = (props) => {
     }
   };
 
+  const facebookSingIn = async () => {
+    console.log("facebook");
+    await Facebook.initializeAsync({
+      appId: "193426132654305",
+    });
+
+    let { type, token } = await Facebook.logInWithReadPermissionsAsync({
+      permissions: ["public_profile"],
+    });
+
+    if (type === "cancel") {
+      console.log("cancel");
+    }
+    console.log("success");
+  };
+
+  // const doFacebookLogin = async (dispatch) => {
+  //   await Facebook.initializeAsync({
+  //     appId: "193426132654305",
+  //   });
+
+  //   let { type, token } = await Facebook.logInWithReadPermissionsAsync({
+  //     permissions: ["public_profile"],
+  //   });
+
+  //   if (type === "cancel") {
+  //     return dispatch({ type: FACBOOK_LOGIN_FAIL });
+  //   }
+
+  //   await AsyncStorage.setItem("fb_token", token);
+
+  //   dispatch({ type: FACBOOK_LOGIN_SUCCESS, payload: token });
+  // };
+
   return (
-    <View style={styles.container}>
-      <Text style={{ fontSize: 25, fontFamily: "CairoBold" }}>تسجيل دخول</Text>
-
-      <TextInput
-        style={styles.input2}
-        placeholder="البريد الالكتروني"
-        value={email}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoCorrect={false}
-        onChangeText={setEmail}
-      />
-
-      <TextInput
-        style={styles.input2}
-        placeholder="كلمة المرور"
-        value={password}
-        secureTextEntry={true}
-        onChangeText={setPassword}
-      />
-
-      {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
-      <TouchableOpacity style={styles.loginButton} onPress={signIn}>
-        <Text
-          style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
-        >
-          دخول
+    <KeyboardAvoidingView>
+      <View style={styles.container}>
+        <Text style={{ fontSize: 25, fontFamily: "CairoBold" }}>
+          تسجيل دخول
         </Text>
-      </TouchableOpacity>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "75%",
-          marginVertical: 10,
-        }}
-      >
-        <View style={styles.hor} />
-        <Text style={{ fontSize: 20, fontFamily: "CairoRegular" }}>أو</Text>
-        <View style={styles.hor} />
+
+        <TextInput
+          style={styles.input2}
+          placeholder="البريد الالكتروني"
+          value={email}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={setEmail}
+        />
+
+        <TextInput
+          style={styles.input2}
+          placeholder="كلمة المرور"
+          value={password}
+          secureTextEntry={true}
+          onChangeText={setPassword}
+        />
+
+        {error ? <Text style={{ color: "red" }}>{error}</Text> : null}
+        <TouchableOpacity style={styles.loginButton} onPress={signIn}>
+          <Text
+            style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
+          >
+            دخول
+          </Text>
+        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "75%",
+            marginVertical: 10,
+          }}
+        >
+          <View style={styles.hor} />
+          <Text style={{ fontSize: 20, fontFamily: "CairoRegular" }}>أو</Text>
+          <View style={styles.hor} />
+        </View>
+
+        <TouchableOpacity
+          style={styles.newButton}
+          onPress={() => props.navigation.navigate("SingUP")}
+        >
+          <Text
+            style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
+          >
+            تسجيل حساب جديد
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.facebookButton}
+          onPress={facebookSingIn}
+        >
+          <Text
+            style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
+          >
+            تسجيل بحساب فيسبوك
+          </Text>
+          <FontAwesome
+            name="facebook"
+            size={24}
+            color="white"
+            style={{ marginLeft: 10 }}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.googleButton} onPress={googleSignIn}>
+          <Text
+            style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
+          >
+            تسجيل بحساب جوجل
+          </Text>
+          <AntDesign
+            name="google"
+            size={24}
+            color="white"
+            style={{ marginLeft: 10 }}
+          />
+        </TouchableOpacity>
       </View>
-
-      <TouchableOpacity
-        style={styles.newButton}
-        onPress={() => props.navigation.navigate("SingUP")}
-      >
-        <Text
-          style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
-        >
-          تسجيل حساب جديد
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.facebookButton}>
-        <Text
-          style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
-        >
-          تسجيل بحساب فيسبوك
-        </Text>
-        <FontAwesome
-          name="facebook"
-          size={24}
-          color="white"
-          style={{ marginLeft: 10 }}
-        />
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.googleButton} onPress={googleSignIn}>
-        <Text
-          style={{ fontSize: 20, fontFamily: "CairoRegular", color: "white" }}
-        >
-          تسجيل بحساب جوجل
-        </Text>
-        <AntDesign
-          name="google"
-          size={24}
-          color="white"
-          style={{ marginLeft: 10 }}
-        />
-      </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
